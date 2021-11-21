@@ -1,7 +1,9 @@
+import time
 import pandas as pd
 from sklearn import svm
 from sklearn.model_selection import GridSearchCV
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neural_network import MLPClassifier
 import os
 import cv2
 import tensorflow as tf
@@ -14,17 +16,9 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report,accuracy_score,confusion_matrix
 import pickle
-
-'''mod = SourceModule("""
-    _global_ void fitter(x_train, y_train)
-    {
-        model.fit(x_train, y_train)
-    }
-""")
-
-modelfit = mod.get_function("fitter")'''
-#def fitter(model, x, y):
-#    return model.fit(x, y)
+from sklearn.metrics import f1_score
+import warnings
+warnings.filterwarnings('always')  # "error", "ignore", "always", "default", "module" or "once"
 
 
 def train():
@@ -36,7 +30,9 @@ def train():
     image_dir = "C:/Users/clark/Desktop/y4/AMLS/AMLS_I_assignment_kit/dataset/image"
     flat_data_arr = []
     target_arr = []
-
+    samplenum = int(input('input int number from 100 to 3000 for how many samples to be used in training.\n '
+                    'Large sample number yields high accuracy model, but it might takes days to train it.\n'
+                          'if you do not have enough time, smaller sample size is recommended'))
     print(f'loading category')
     picnum = 0
     for img in os.listdir(image_dir):
@@ -46,7 +42,7 @@ def train():
         target_index = img_name.index(img)
         target_arr.append(categories.index(img_label[target_index]))
         picnum += 1
-        if picnum == 500:
+        if picnum == samplenum:
             break
     flat_data = np.array(flat_data_arr)
     target = np.array(target_arr)
@@ -61,25 +57,42 @@ def train():
     print('Splitted Successfully')
     print(y)
     print(x)
-    param_grid={'C':[0.1,1,10,100],'gamma':[0.0001,0.001,0.1,1],'kernel':['rbf','poly']}
-    svc = svm.SVC(probability=True)
-    print("Training begin")
-    #model = GridSearchCV(svc,param_grid, n_jobs=-1)
-    model = KNeighborsClassifier(n_neighbors=3)
-    print('gridsearchcv done')
+    choice = int(input('please choose classifier: 1. KNN ; 2. SVM ; 3. MLP '))
+    if choice == 2:
+        param_grid={'C':[5, 10, 100],'gamma':[0.1, 1, 10],'kernel':['linear','rbf','poly']}
+        svc = svm.SVC(probability=True)
+        print("Training begin")
+        model = GridSearchCV(svc,param_grid, n_jobs=-1)
+        start = time.time()
+    elif choice == 1:
+        print("Training begin")
+        model = KNeighborsClassifier(n_neighbors=3)
+        start = time.time()
+    elif choice == 3:
+        '''param_grid = {
+            'hidden_layer_sizes': [(50,), (100,), (150,)],
+            'activation': ['logistic','tanh', 'relu'],
+            'solver': ['sgd', 'adam','lbfgs'],
+        }
+        mlp = MLPClassifier(random_state=1, max_iter=500)
+        print('Training begin')
+        model = GridSearchCV(mlp, param_grid, n_jobs=-1)'''
+        model = MLPClassifier(random_state=1, max_iter=500)
+        start = time.time()
     model.fit(x_train, y_train)
-    print('Training completed with best parameter:')
-    #print(model.best_params_)
-    y_pred=model.predict(x_test)
+    end = time.time()
+    if choice == 2:
+        print('Training completed with best parameter:')
+        print(model.best_params_)
+    y_pred = model.predict(x_test)
     print("The predicted Data is :")
     print(y_pred)
     print("The actual data is:")
     print(np.array(y_test))
-    #classification_report(y_pred,y_test)
+    classification_report(y_pred,y_test)
     print(f"The model is {accuracy_score(y_pred,y_test)*100}% accurate")
+    print('time elapsed: ', (end-start))
     #confusion_matrix(y_pred,y_test)
-    #pickle.dump(model,open('img_model.p','wb'))
-    #print("Pickle is dumped successfully")
 
-
+    
 train()
