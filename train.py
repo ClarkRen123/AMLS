@@ -24,10 +24,10 @@ warnings.filterwarnings('always')  # "error", "ignore", "always", "default", "mo
 def train():
 
     categories = ["meningioma_tumor", "glioma_tumor", "pituitary_tumor", "no_tumor"]
-    data = pd.read_csv("C:/Users/clark/Desktop/y4/AMLS/AMLS_I_assignment_kit/dataset/label.csv")
+    data = pd.read_csv("./dataset/label.csv")
     img_label = data['label'].tolist()
     img_name = data['file_name'].tolist()
-    image_dir = "C:/Users/clark/Desktop/y4/AMLS/AMLS_I_assignment_kit/dataset/image"
+    image_dir = "./dataset/image"
     flat_data_arr = []
     target_arr = []
     samplenum = int(input('input int number from 100 to 3000 for how many samples to be used in training.\n '
