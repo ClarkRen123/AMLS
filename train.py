@@ -93,6 +93,8 @@ def train():
     print(f"The model is {accuracy_score(y_pred,y_test)*100}% accurate")
     print('time elapsed: ', (end-start))
     #confusion_matrix(y_pred,y_test)
+    #pickle.dump(model,open('img_model.p','wb'))
+    #print("Pickle is dumped successfully")
 
-    
+
 train()
