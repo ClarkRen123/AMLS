@@ -20,10 +20,10 @@ print(device)
 torch.cuda.empty_cache()
 
 # hyper parameter
-n_epochs = 20  #number of training epochs
+n_epochs = 100  #number of training epochs
 batch_size_train = 240 #batch_size for training
 batch_size_test = 1000 #batch_size for testing
-learning_rate = 0.001 # 0.01~0.0001 smaller means slower but more accurate
+learning_rate = 0.0001 # 0.01~0.0001 smaller means slower but more accurate
 momentum = 0.5 # SGD algorithm speed multiplier, 0.5 = double; 0.9 = 10x speed
 log_interval = 10
 random_seed = 2
@@ -109,8 +109,19 @@ class CNNModel(nn.Module):
         self.maxpool2 = nn.MaxPool2d(kernel_size=2, stride=2)
         self.conv2_drop = nn.Dropout(0.25)
 
+        # Convolution layer 3
+        self.conv5 = nn.Conv2d(in_channels=64, out_channels=128, kernel_size=3, stride=1, padding=0)
+        self.relu5 = nn.ReLU()
+        self.batch5 = nn.BatchNorm2d(128)
+
+        self.conv6 = nn.Conv2d(in_channels=128, out_channels=128, kernel_size=3, stride=1, padding=0)
+        self.relu6 = nn.ReLU()
+        self.batch6 = nn.BatchNorm2d(128)
+        self.maxpool3 = nn.MaxPool2d(kernel_size=2, stride=2)
+        self.conv3_drop = nn.Dropout(0.25)
+
         # Fully-Connected layer 1
-        self.fc1 = nn.Linear(50176, 128)
+        self.fc1 = nn.Linear(18432, 128)
         self.fc1_relu = nn.ReLU()
         self.dp1 = nn.Dropout(0.5)
 
@@ -142,6 +153,17 @@ class CNNModel(nn.Module):
         out = self.maxpool2(out)
         out = self.conv2_drop(out)
 
+        # conv layer 3
+        out = self.conv5(out)
+        out = self.relu5(out)
+        out = self.batch5(out)
+
+        out = self.conv6(out)
+        out = self.relu6(out)
+        out = self.batch6(out)
+
+        out = self.maxpool3(out)
+        out = self.conv3_drop(out)
         # Flatten
         out = out.view(out.size(0), -1)
 
