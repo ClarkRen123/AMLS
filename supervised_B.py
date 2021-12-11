@@ -35,20 +35,22 @@ def train():
     picnum = 0
     for img in os.listdir(image_dir):
         img_array = imread(os.path.join(image_dir, img))
-        img_resized = resize(img_array, (100, 100, cv2.INTER_AREA))
+        img_resized = resize(img_array, (100, 100, cv2.INTER_AREA)) # resize
         flat_data_arr.append(img_resized.flatten())
         target_index = img_name.index(img)
-        target_arr.append(categories.index(img_label[target_index]))
+        target_arr.append(categories.index(img_label[target_index])) # append corresponding indices as labels
         picnum += 1
+        # stop loading data if limit reached, if limit specifies 3000 then load all
         if picnum == samplenum:
             break
+    # flatten data
     flat_data = np.array(flat_data_arr)
     target = np.array(target_arr)
     df = pd.DataFrame(flat_data)
     df['Target'] = target
     print(df)
     print(f'loaded category successfully')
-
+    # separate labels and image arrays
     x = df.iloc[:,:-1]
     y = df.iloc[:,-1]
     x_train,x_test,y_train,y_test = train_test_split(x,y,test_size=0.20,random_state=0,stratify=y)
@@ -56,7 +58,7 @@ def train():
     print(y)
     print(x)
     choice = int(input('please choose classifier: 1. KNN ; 2. SVM ; 3. MLP '))
-    if choice == 2:
+    if choice == 2: # SVM approach
         param_grid={'C':[5, 10, 100],'gamma':[0.1, 1, 10],'kernel':['linear','rbf','poly']} #only activate this if you
                                                                                             #have sufficient time
         svc = svm.SVC(probability=True , kernel='rbf')
@@ -64,11 +66,11 @@ def train():
         model = svc
         # model = GridSearchCV(svc,param_grid, n_jobs=-1)  #test shows that default value of svc gives best result
         start = time.time()
-    elif choice == 1:
+    elif choice == 1: # KNN approach
         print("Training begin")
         model = KNeighborsClassifier(n_neighbors=3)
         start = time.time()
-    elif choice == 3:
+    elif choice == 3: # MLP approach
         '''param_grid = {
             'hidden_layer_sizes': [(50,), (100,), (150,)],
             'activation': ['logistic','tanh', 'relu'],
@@ -79,12 +81,14 @@ def train():
         model = GridSearchCV(mlp, param_grid, n_jobs=-1)'''
         model = MLPClassifier(random_state=1, max_iter=500)
         start = time.time()
+    # fitting model
     model.fit(x_train, y_train)
     end = time.time()
     '''
     if choice == 2:
         print('Training completed with best parameter:')
         print(model.best_params_)'''
+    # predict label and validate
     y_pred = model.predict(x_test)
     print("The predicted Data is :")
     print(y_pred)
@@ -93,6 +97,7 @@ def train():
     classification_report(y_pred,y_test)
     print(f"The model is {accuracy_score(y_pred,y_test)*100}% accurate")
     print('time elapsed: ', (end-start))
+    # store model for future testing
     pickle.dump(model,open('supervisedTaskB.p','wb'))
     print("Pickle is dumped successfully")
 

@@ -21,10 +21,10 @@ print(device)
 torch.cuda.empty_cache()
 
 # hyper parameter
-n_epochs = 10  #number of training epochs
-batch_size_train = 240 #batch_size for training
-batch_size_test = 1000 #batch_size for testing
-learning_rate = 0.0001 # 0.01~0.0001 smaller means slower but more accurate
+n_epochs = 10  # number of training epochs
+batch_size_train = 240 # batch_size for training
+batch_size_test = 1000 # batch_size for testing
+learning_rate = 0.0001 # 0.01~0.0001 smaller lr means longer optimization time
 momentum = 0.5 # SGD algorithm speed multiplier, 0.5 = double; 0.9 = 10x speed
 log_interval = 10
 random_seed = 2

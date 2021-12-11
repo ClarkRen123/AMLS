@@ -10,6 +10,7 @@ from sklearn.metrics import classification_report,accuracy_score,confusion_matri
 import pickle
 import time
 
+# import data
 categories = ["meningioma_tumor", "glioma_tumor", "pituitary_tumor", "no_tumor"]
 data = pd.read_csv("./test/label.csv")
 img_label = data['label'].tolist()
@@ -19,9 +20,13 @@ flat_data_arr = []
 target_arr = []
 count = 0
 total = 200
+
+# load model
 model=pickle.load(open('supervisedTaskB.p','rb'))
 print('test begin')
 start = time.time()
+
+# test the 200 given images
 for i in range(200):
   img=imread("./test/image/"+img_name[i])
   img_resize=resize(img,(100,100,cv2.INTER_AREA))
@@ -32,4 +37,4 @@ for i in range(200):
 end = time.time()
 Acc = count/total
 print("Accuracy of model:", Acc)
-print('time used',end-start)
+print('time used',end-start,'seconds')

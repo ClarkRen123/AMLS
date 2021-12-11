@@ -141,7 +141,6 @@ def imageProcess(img):
     return imgs'''
 
 
-
 path = './test/'
 data = pd.read_csv("./test/label.csv")
 img_label = data['label'].tolist()
@@ -150,6 +149,8 @@ image_dir = "./test/image"
 counter = 0
 loss = 0
 total = 200
+
+
 class MyDataset(torch.utils.data.Dataset):  # Create Dataset
     def __init__(self, transform=torchvision.transforms.ToTensor(), target_transform=None):  # Initializer
         categories = ["meningioma_tumor", "glioma_tumor", "pituitary_tumor", "no_tumor"]

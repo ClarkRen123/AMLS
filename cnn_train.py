@@ -20,10 +20,10 @@ print(device)
 torch.cuda.empty_cache()
 
 # hyper parameter
-n_epochs = 50  #number of training epochs
-batch_size_train = 256 #batch_size for training, large batchsize results in faster generalization
-batch_size_test = 500 #batch_size for testing
-learning_rate = 0.0001 # learning rate
+n_epochs = 50  # number of training epochs
+batch_size_train = 256 # batch_size for training, large batchsize results in faster regression
+batch_size_test = 500 # batch_size for testing
+learning_rate = 0.0001 # learning rate, suggest to be set a low value from 0.01 to 0.0001
 momentum = 0.5 # SGD algorithm speed multiplier, 0.5 = double; 0.9 = 10x speed
 log_interval = 10
 random_seed = 2
