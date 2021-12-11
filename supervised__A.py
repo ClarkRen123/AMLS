@@ -99,16 +99,11 @@ def train_a():
         print(model.best_params_)'''
     # predict label and validate
     y_pred = model.predict(x_test)
-    print("The predicted Data is :")
-    print(y_pred)
-    print("The actual data is:")
-    print(np.array(y_test))
     classification_report(y_pred,y_test)
     print(f"The model is {accuracy_score(y_pred,y_test)*100}% accurate")
     print('time elapsed: ', (end-start))
     # store model for future testing
     pickle.dump(model,open('supervisedTask_A.p','wb'))
-    print("Pickle is dumped successfully")
 
 
 train_a()
