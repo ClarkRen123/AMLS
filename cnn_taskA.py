@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 from PIL import Image
 import matplotlib.image as image
 import cv2
+import numpy
 import os
 import pandas as pd
 
@@ -20,10 +21,10 @@ print(device)
 torch.cuda.empty_cache()
 
 # hyper parameter
-n_epochs = 50  #number of training epochs
-batch_size_train = 256 #batch_size for training, large batchsize results in faster generalization
-batch_size_test = 500 #batch_size for testing
-learning_rate = 0.0001 # learning rate
+n_epochs = 10  #number of training epochs
+batch_size_train = 240 #batch_size for training
+batch_size_test = 1000 #batch_size for testing
+learning_rate = 0.0001 # 0.01~0.0001 smaller means slower but more accurate
 momentum = 0.5 # SGD algorithm speed multiplier, 0.5 = double; 0.9 = 10x speed
 log_interval = 10
 random_seed = 2
@@ -34,14 +35,20 @@ data = pd.read_csv("./dataset/label.csv")
 img_label = data['label'].tolist()
 img_name = data['file_name'].tolist()
 image_dir = "./dataset/image"
+to_append = 0
 
 
 class MyDataset(torch.utils.data.Dataset):  # Create Dataset
     def __init__(self, transform=torchvision.transforms.ToTensor(), target_transform=None):  # Initializer
         categories = ["meningioma_tumor", "glioma_tumor", "pituitary_tumor", "no_tumor"]
         imgs = []
-        for i in range (len(img_name)):
-            imgs.append((img_name[i],categories.index(img_label[i]))) # tumor types converted to int
+        for i in range(len(img_name)):
+            if (img_label == "meningioma_tumor") or (img_label == "glioma_tumor") or (
+                    img_label == "pituitary_tumor"):
+                to_append = 1    # 1 stands for tumor
+            else:
+                to_append = 0   # 0 stands for no-tumor
+            imgs.append((img_name[i],to_append)) # append to imgs array
         self.imgs = imgs
         self.transform = transform
         self.target_transform = target_transform
@@ -61,7 +68,7 @@ class MyDataset(torch.utils.data.Dataset):  # Create Dataset
 # split dataset for training and validation
 all_data=MyDataset()
 length = len(all_data)
-train_size,validate_size=int(0.9*length),int(0.1*length)
+train_size,validate_size=int(0.8*length),int(0.2*length)
 train_set,validate_set=torch.utils.data.random_split(all_data,[train_size,validate_size])
 print(train_set,validate_set)
 
@@ -279,10 +286,10 @@ def test(epoch):
 
     if test_acces[-1] >= max(test_acces):
         # save model after testing
-        torch.save(network.state_dict(), './model_taskB.pth')
+        torch.save(network.state_dict(), './model_taskA.pth')
 
         # save optimizer after testing
-        torch.save(optimizer.state_dict(), './optimizer_taskB.pth')
+        torch.save(optimizer.state_dict(), './optimizer_taskA.pth')
 
     # print statistical data
     '''
