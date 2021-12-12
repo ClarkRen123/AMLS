@@ -11,6 +11,10 @@ After downloading the 8 python files, please put them in the same directory with
 
 ![Alt text](./view.png)
 
+## Library Used
+numpy ; matplotlib ; PIL ; cv2 ; os ; pandas ; torch ; torchvision ; sklearn ; skimage ; time ; pickle ; warnings
+
+
 ## supervised__A.py
 Supervised learning agent for task A. When running the agent, you may be asked to input number of training files. This function is used to allow flexible debugging.
 If you want to train for all files, just type 3000 and press enter. There's no validation in the interface so if wrong value is entered, program might crash.
